@@ -1,10 +1,8 @@
-import cv from './cv.png'
+import cv from './cv.png';
 import './App.css';
 import React, { useState, useEffect } from 'react';
 
-
 function App() {
-
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -16,14 +14,21 @@ function App() {
         const data = await response.json();
         if (isMounted) {
           setMessage(data.Message);
+          localStorage.setItem('visitorNumber', data.Message);
+          localStorage.setItem('hasVisited', 'true');
         }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    if (!message) {
+    const hasVisited = localStorage.getItem('hasVisited');
+    const storedMessage = localStorage.getItem('visitorNumber');
+
+    if (!hasVisited && !message) {
       fetchData();
+    } else if (storedMessage) {
+      setMessage(storedMessage);
     }
 
     return () => {
@@ -34,7 +39,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>You are visitor number {message}.</p>      
+        <p>You are visitor number {message}.</p>
         <img src={cv} alt="cv" className="full-width-image" />
       </header>
     </div>
